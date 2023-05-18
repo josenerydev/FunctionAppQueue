@@ -23,11 +23,30 @@ namespace FunctionAppQueue
             {
                 await connection.OpenAsync();
 
-                string sqlInsert = "INSERT INTO WeatherForecast (Date, TemperatureC, Summary) " +
-                                   "OUTPUT Inserted.Id, Inserted.Date, Inserted.TemperatureC, Inserted.Summary " +
-                                   "VALUES (@Date, @TemperatureC, @Summary)";
+                // Create an instance of Random
+                var random = new Random();
 
-                var insertedForecast = await connection.QueryFirstAsync<WeatherForecast>(sqlInsert, forecast);
+                // Generate a random number between 0 and 100
+                int randomNumber = random.Next(0, 100);
+
+                string sqlInsert;
+
+                // 40% chance to add a delay
+                if (randomNumber < 40)
+                {
+                    sqlInsert = "WAITFOR DELAY '00:01:00'; " +
+                                "INSERT INTO WeatherForecast (Date, TemperatureC, Summary) " +
+                                "OUTPUT Inserted.Id, Inserted.Date, Inserted.TemperatureC, Inserted.Summary " +
+                                "VALUES (@Date, @TemperatureC, @Summary)";
+                }
+                else
+                {
+                    sqlInsert = "INSERT INTO WeatherForecast (Date, TemperatureC, Summary) " +
+                                "OUTPUT Inserted.Id, Inserted.Date, Inserted.TemperatureC, Inserted.Summary " +
+                                "VALUES (@Date, @TemperatureC, @Summary)";
+                }
+
+                var insertedForecast = await connection.QueryFirstAsync<WeatherForecast>(sqlInsert, forecast, commandTimeout: 30);
 
                 return insertedForecast;
             }
