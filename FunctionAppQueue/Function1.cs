@@ -34,10 +34,10 @@ namespace FunctionAppQueue
             {
                 log.LogError($"Timeout error while saving forecast to the database: {ex.Message}");
 
-                var messageWithMetadata = new
+                var messageWithMetadata = new PoisonMessage
                 {
-                    OriginalMessage = forecast,
-                    Metadata = new
+                    OriginalMessage = forecast.ToWeatherForecastMessage(),
+                    Metadata = new WeatherForecastMessageMetadata
                     {
                         Error = "Timeout error",
                         ExceptionMessage = ex.Message
@@ -51,10 +51,10 @@ namespace FunctionAppQueue
             {
                 log.LogError($"Failed to save forecast to the database: {ex.Message}");
 
-                var messageWithMetadata = new
+                var messageWithMetadata = new PoisonMessage
                 {
-                    OriginalMessage = forecast,
-                    Metadata = new
+                    OriginalMessage = forecast.ToWeatherForecastMessage(),
+                    Metadata = new WeatherForecastMessageMetadata
                     {
                         Error = "Database error",
                         ExceptionMessage = ex.Message

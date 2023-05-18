@@ -2,7 +2,7 @@
 {
     public class PoisonMessage
     {
-        public WeatherForecast OriginalMessage { get; set; }
-        public WeatherForecastMetadata Metadata { get; set; }
+        public WeatherForecastMessage OriginalMessage { get; set; }
+        public WeatherForecastMessageMetadata Metadata { get; set; }
     }
 }
