@@ -97,24 +97,24 @@ namespace FunctionAppQueue
             }
         }
 
-        //[FunctionName("PoisonQueueFunction")]
-        //public static async Task ProcessPoisonQueueMessage(
-        //    [QueueTrigger("sample-queue-poison")] string myQueueItem,
-        //    [Queue("sample-queue")] IAsyncCollector<string> queueCollector,
-        //    ILogger log)
-        //{
-        //    log.LogError($"Processing poison message: {myQueueItem}");
+        [FunctionName("PoisonQueueFunction")]
+        public static async Task ProcessPoisonQueueMessage(
+            [QueueTrigger("sample-queue-poison")] string myQueueItem,
+            [Queue("sample-queue")] IAsyncCollector<string> queueCollector,
+            ILogger log)
+        {
+            log.LogError($"Processing poison message: {myQueueItem}");
 
-        //    // Deserialize the message to access its metadata
-        //    var message = JsonSerializer.Deserialize<PoisonMessage<WeatherForecast>>(myQueueItem);
+            // Deserialize the message to access its metadata
+            var message = JsonSerializer.Deserialize<PoisonMessage<WeatherForecast>>(myQueueItem);
 
-        //    // Check if the Error metadata is "Timeout error"
-        //    if (message.Metadata.Error == "Timeout error")
-        //    {
-        //        // Attempt to process the message again by adding it back to the original queue
-        //        var originalMessageJson = JsonSerializer.Serialize(message.OriginalMessage);
-        //        await queueCollector.AddAsync(originalMessageJson);
-        //    }
-        //}
+            // Check if the Error metadata is "Timeout error"
+            if (message.Metadata.Error == "Timeout error")
+            {
+                // Attempt to process the message again by adding it back to the original queue
+                var originalMessageJson = JsonSerializer.Serialize(message.OriginalMessage);
+                await queueCollector.AddAsync(originalMessageJson);
+            }
+        }
     }
 }
