@@ -1,8 +1,8 @@
 ﻿namespace FunctionAppQueue
 {
-    public class PoisonMessage
+    public class PoisonMessage<T>
     {
-        public WeatherForecastMessage OriginalMessage { get; set; }
-        public WeatherForecastMessageMetadata Metadata { get; set; }
+        public T OriginalMessage { get; set; }
+        public MessageMetadata Metadata { get; set; }
     }
 }
