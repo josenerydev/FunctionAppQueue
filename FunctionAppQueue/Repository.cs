@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
@@ -49,6 +50,29 @@ namespace FunctionAppQueue
                 var insertedForecast = await connection.QueryFirstAsync<WeatherForecast>(sqlInsert, forecast, commandTimeout: 30);
 
                 return insertedForecast;
+            }
+        }
+
+        public async Task Test(WeatherForecast forecast)
+        {
+            var address = new DataTable();
+            address.Columns.Add("Street", typeof(string));
+            address.Columns.Add("City", typeof(string));
+            address.Columns.Add("State", typeof(string));
+            address.Columns.Add("ZipCode", typeof(string));
+
+            address.Rows.Add("123 Main St.", "Smallville", "KS", "12345");
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                // Create an instance of Random
+                var parameters = new DynamicParameters();
+
+                parameters.Add("@Addresses", address.AsTableValuedParameter("Address"));
+
+                connection.Execute("YourStoredProcedure", parameters, commandType: CommandType.StoredProcedure);
             }
         }
 
